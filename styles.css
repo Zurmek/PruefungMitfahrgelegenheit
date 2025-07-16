@@ -563,3 +563,7 @@ a {
   margin-bottom: 0.2em;
   font-size: 1rem;
 }
+
+#welcomeBox {
+  text-align: center;
+}

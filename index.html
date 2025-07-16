@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fahrgemeinschafts-Matcher</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+
+    <!-- Logo oben links -->
+  <div id="logoFixed">
+    <img src="https://www.haw-landshut.de/_assets/f8435a551050141f18e61450879a8aab/Images/logo.svg" alt="Logo Hochschule Landshut" id="logoImg">
+  </div>
+  <!-- Navigation oben rechts -->
+  <div id="mainMenu" class="dropdown">
+    <button class="dropdown-button">☰</button>
+    <div class="dropdown-content">
+      <button class="tertierary-button" onclick="zeigeBereich('startScreen')">Startseite</button>
+      <button class="tertierary-button" onclick="zeigeBereich('fahrerForm')">Fahrt anbieten</button>
+      <button class="tertierary-button" onclick="zeigeFahrerListe()">Fahrtenübersicht</button>
+      <button class="tertierary-button" onclick="zeigeMeineFahrten()">Meine Fahrten</button>
+      <button class="tertierary-button" onclick="zeigeBenutzereinstellungen()">Einstellungen</button>
+      <button class="tertierary-button" onclick="logout()">Ausloggen</button>
+    </div>
+  </div>
+
+  <!-- Startseite: Fahrtsuche wie bei BlaBlaCar -->
+  <div id="startScreen" class="section-box">
+    <h1>Finde deine Mitfahrgelegenheit</h1>
+    <form id="matchFormSuche">
+      <div class="input-group">
+        <label for="sucheStartSuche">🚗 Von</label>
+        <input type="text" id="sucheStartSuche" placeholder="Startort" required />
+      </div>
+      <div class="input-group">
+        <label for="sucheZielSuche">🏁 Nach</label>
+        <input type="text" id="sucheZielSuche" placeholder="Zielort" required />
+      </div>
+      <div class="input-group">
+        <label for="sucheDatumSuche">🗓️ Datum</label>
+        <input type="date" id="sucheDatumSuche" required />
+      </div>
+      <div class="input-group">
+        <label for="sucheMitfahrer">💺 Mitfahrer</label>
+        <input type="number" id="sucheMitfahrer" min="1" value="1" style="max-width: 80px;" />
+      </div>
+      <button type="submit" style="width:100%;margin-top:1.5rem;">Suchen</button>
+    </form>
+  </div>
+
+    <div id="userSettings" style="display: none">
+      <button type="button" class="secondary-button" onclick="zeigeBereich('startScreen')">Zurück</button>
+      <h2>Benutzereinstellungen</h2>
+      <form id="userSettingsForm">
+        <div class="input-group">
+          <label for="firstName">Vorname:</label>
+          <input type="text" id="firstName" required />
+        </div>
+        <div class="input-group">
+          <label for="lastName">Nachname:</label>
+          <input type="text" id="lastName" required />
+        </div>
+        <div class="input-group">
+          <label for="phone">Telefonnummer:</label>
+          <input type="tel" id="phone" />
+        </div>
+        <div class="input-group">
+          <label for="homeAddress">Wohnort:</label>
+          <input type="text" id="homeAddress" required />
+        </div>
+        <div class="input-group">
+          <label for="gender">Geschlecht:</label>
+          <select id="gender" required>
+            <option value="">Bitte auswählen</option>
+            <option value="male">Männlich</option>
+            <option value="female">Weiblich</option>
+            <option value="other">Divers</option>
+          </select>
+        </div>
+        <button type="submit">Speichern</button>
+      </form>
+    </div>
+
+  
+    <div id="homePage">
+      <div id="welcomeBox" class="section-box">
+        <h1>Willkommen!</h1>
+        <p>Mit dem Fahrgemeinschafts-Matcher findest du ganz einfach Fahrer*innen und Mitfahrer*innen aus deiner Umgebung zur Hochschule Landshut.</p>
+        <ul class="welcome-list">
+          <li>🚗 Gemeinsam fahren spart CO₂</li>
+          <li>💬 Kontakt per Mail oder WhatsApp</li>
+          <li>📍 Routen und Fahrer auf Karte sehen</li>
+          <li>🆓 Kostenlos und ohne Werbung</li>
+        </ul>
+        <div class="button-row">
+          <button onclick="zeigeBereich('registrationForm')">Ich bin neu hier</button>
+          <button onclick="zeigeBereich('loginForm')">Ich habe ein Konto</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading" id="loading">Lade...</div>
+    
+    <!-- Registration Form -->
+    <form id="registrationForm" style="display: none">
+      <button type="button" class="secondary-button" onclick="zeigeBereich('welcomeBox')">Zurück</button>
+      <h2>Registrieren</h2>
+      <div class="input-group">
+        <label for="regFirstName">Vorname:</label>
+        <input type="text" id="regFirstName" required />
+        <span class="validation-message"></span>
+      </div>
+      <div class="input-group">
+        <label for="regLastName">Nachname:</label>
+        <input type="text" id="regLastName" required />
+        <span class="validation-message"></span>
+      </div>
+      <div class="input-group">
+        <label for="regPhone">Telefonnummer:</label>
+        <input type="tel" id="regPhone" required/>
+        <span class="validation-message"></span>
+      </div>
+      <div class="input-group">
+        <label for="regHomeAddress">Wohnort:</label>
+        <input type="text" id="regHomeAddress" required />
+        <span class="validation-message"></span>
+      </div>
+      <div class="input-group">
+        <label for="regGender">Geschlecht:</label>
+        <select id="regGender" required>
+          <option value="">Bitte auswählen</option>
+          <option value="male">Männlich</option>
+          <option value="female">Weiblich</option>
+          <option value="other">Divers</option>
+        </select>
+        <span class="validation-message"></span>
+      </div>
+      <div class="input-group">
+        <label for="regEmail">E-Mail (Uni):</label>
+        <input type="email" id="regEmail" required />
+        <span class="validation-message"></span>
+      </div>
+      
+      <div class="input-group">
+        <label for="regPassword">Passwort:</label>
+        <input type="password" id="regPassword" required />
+        <span class="validation-message"></span>
+      </div>
+      <button type="submit">Registrieren</button>
+    </form>
+
+    <!-- Login Form -->
+    <form id="loginForm" style="display: none">
+      <button type="button" class="secondary-button" onclick="zeigeBereich('welcomeBox')">Zurück</button>
+      <h2>Einloggen</h2>
+      <div class="input-group">
+        <label for="loginEmail">E-Mail:</label>
+        <input type="email" id="loginEmail" required />
+        <span class="validation-message"></span>
+      </div>
+      <div class="input-group">
+        <label for="loginPassword">Passwort:</label>
+        <input type="password" id="loginPassword" required />
+        <span class="validation-message"></span>
+      </div>
+      <button type="submit">Einloggen</button>
+      <button type="button" onclick="handleForgotPassword()" class="secondary-button">Passwort vergessen?</button>
+    </form>
+
+
+    <!-- Form to add drivers -->
+    <form id="fahrerForm" style="display: none">
+      <button type="button" class="secondary-button" onclick="zeigeBereich('startScreen')">Zurück</button>
+      <h2>Fahrt anbieten</h2>
+      <div class="input-group"><label for="fahrtStart">🚗 Start:</label><input type="text" id="fahrtStart" required /></div>
+      <div class="input-group"><label for="fahrtZiel">🏁 Ziel:</label><input type="text" id="fahrtZiel" required /></div>
+      <div class="input-group"><label for="fahrtDatum">🗓️ Datum:</label><input type="date" id="fahrtDatum" required /></div>
+      <div class="input-group"><label for="fahrtZeit">⏰ Uhrzeit:</label><input type="time" id="fahrtZeit" required /></div>
+      <div class="input-group"><label for="freiePlaetze">💺 Freie Plätze:</label><input type="number" id="freiePlaetze" min="1" max="8" required /></div>
+      <div class="input-group"><label for="fahrtPreis">💶 Preis pro Platz (€):</label><input type="number" id="fahrtPreis" min="0" step="0.5" required /></div>
+      <button type="submit">Fahrt speichern</button>
+    </form>
+
+
+
+    <!-- Form to search for passengers -->
+    <form id="matchFormPassengers" style="display: none">
+      <button type="button" class="secondary-button" onclick="zeigeBereich('startScreen')">Zurück</button>
+      <h2>Fahrt suchen</h2>
+      <div class="input-group"><label for="sucheStartPassengers">🚗 Start:</label><input type="text" id="sucheStartPassengers" required /></div>
+      <div class="input-group"><label for="sucheZielPassengers">🏁 Ziel:</label><input type="text" id="sucheZielPassengers" required /></div>
+      <div class="input-group"><label for="sucheDatumPassengers">🗓️ Datum:</label><input type="date" id="sucheDatumPassengers" required /></div>
+      <div class="input-group"><label for="sucheMaxPreis">💶 Max. Preis (€):</label><input type="number" id="sucheMaxPreis" min="0" step="0.5" /></div>
+      <button type="submit">Fahrt finden</button>
+    </form>
+
+
+    <!-- Results and driver list -->
+    <div class="results" id="results" style="display: none"></div>
+    <div class="fahrer-liste" id="fahrerListe" style="display: none">
+      <button type="button" class="secondary-button" onclick="zeigeBereich('startScreen')">Zurück</button>
+      <h2>Fahrtenübersicht</h2>
+      <!-- Filterfelder für Fahrerliste -->
+      <!-- Button zum Öffnen des Filters -->
+      <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 0.5rem;">
+        <button id="filterToggleBtn" class="small-button" onclick="toggleFahrerFilter()">🔍 Filter</button>
+      </div>
+      <!-- Versteckbarer Filter-Container -->
+      <div id="fahrerFilterBox" style="display:none; margin-bottom:1.5rem;">
+        <input type="text" id="filterStadt" placeholder="Abfahrtsort" style="margin-right:1rem; padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;">
+        <input type="text" id="filterZiel" placeholder="Zielort" style="margin-right:1rem; padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;">
+        <input type="date" id="filterDatumVon" style="padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;" placeholder="Von">
+        <input type="date" id="filterDatumBis" style="padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;" placeholder="Bis">
+        <button class="small-button" onclick="filterFahrerListe(); hideFahrerFilter();">Filtern</button>
+        <button class="small-button" onclick="resetFahrerFilter()">Zurücksetzen</button>
+      </div>
+      <div id="fahrerListeContent"></div>
+    </div>
+    <div id="map" style="display: none"></div>
+
+    <!-- Message box -->
+    <div class="nachricht-box" id="nachrichtBox" style="display: none">
+      <h3>Nachricht an <span id="empfaengerName"></span> senden</h3>
+      <textarea id="nachrichtText" rows="4" placeholder="Deine Nachricht..."></textarea>
+      <div class="message-preview" id="messagePreview"></div>
+      <button onclick="sendeNachricht()">Senden</button>
+    </div>
+
+    <!-- Footer links -->
+    <div class="footer-links">
+      <button class="small-button" onclick="window.open('https://www.haw-landshut.de/datenschutz', '_blank')">Datenschutz</button>
+      <button onclick="zeigeImpressum()" class="small-button">Impressum</button>
+    </div>
+
+    <!-- Imprint modal -->
+    <div id="impressumModal" class="modal">
+      <div class="modal-content">
+        <h3>Impressum</h3>
+        <p>Jared Auras<br>Karlsbader Straße 6<br>84028 Landshut</p>
+        <button onclick="schliesseImpressum()" class="small-button">Schließen</button>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="bundle.js"></script>
+    <script>
+function zeigeMitfahrerListe(tag) {
+  const storage = setupStorage();
+  const mitfahrerDaten = storage.getMitfahrerDaten ? storage.getMitfahrerDaten() : [];
+  const mitfahrerListe = mitfahrerDaten.filter(m => m.tag === tag);
+  let html = '';
+  if (mitfahrerListe.length === 0) {
+    html = '<p>Keine Mitfahrer für diesen Tag gefunden.</p>';
+  } else {
+    mitfahrerListe.forEach(m => {
+      html += `<div class="mitfahrer-item">
+        <p>E-Mail: ${m.email}</p>
+        <p>Zielzeit: ${m.zielzeit}</p>
+      </div>`;
+    });
+  }
+  document.getElementById('fahrerListeContent').innerHTML = html;
+}
+
+// Button "Fahrerliste anzeigen" mit Funktion verknüpfen
+const btnFahrerliste = document.querySelector('button[onclick="zeigeBereich(\'fahrerListe\')"]');
+if (btnFahrerliste) {
+  btnFahrerliste.addEventListener('click', function() {
+    zeigeFahrerListe();
+    zeigeBereich('fahrerListe');
+  });
+}
+
+// Mitfahrer speichern und bearbeiten
+function ladeMitfahrerFormMitEigenenDaten() {
+  const storage = setupStorage();
+  const loggedInUser = storage.getLoggedInUser();
+  if (!loggedInUser) return;
+  const mitfahrerDaten = storage.getMitfahrerDaten ? storage.getMitfahrerDaten() : [];
+  const meinMitfahrer = mitfahrerDaten.find(m => m.email === loggedInUser);
+  document.getElementById('mitfahrerTag').value = meinMitfahrer?.tag || '';
+  document.getElementById('mitfahrerZielzeit').value = meinMitfahrer?.zielzeit || '';
+}
+// Button "Als Mitfahrer registrieren" mit Funktion verknüpfen
+const btnMitfahrer = document.querySelector('button[onclick="zeigeBereich(\'mitfahrerForm\')"]');
+if (btnMitfahrer) {
+  btnMitfahrer.addEventListener('click', function() {
+    ladeMitfahrerFormMitEigenenDaten();
+    zeigeBereich('mitfahrerForm');
+  });
+}
+// Mitfahrer speichern und pro Tag nur einmal, nicht wenn Fahrer an dem Tag
+const mitfahrerForm = document.getElementById('mitfahrerForm');
+if (mitfahrerForm) {
+  mitfahrerForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const storage = setupStorage();
+    const loggedInUser = storage.getLoggedInUser();
+    const tag = document.getElementById('mitfahrerTag').value;
+    const zielzeit = document.getElementById('mitfahrerZielzeit').value;
+    // Adresse aus Benutzereinstellungen holen
+    const users = storage.getUsers();
+    const user = users.find(u => u.email === loggedInUser);
+    const startAdresse = user?.homeAddress || '';
+    // Prüfe, ob User an dem Tag schon Fahrer ist
+    const fahrerDaten = storage.getFahrerDaten();
+    const istFahrer = fahrerDaten.some(f => f.fahrer === loggedInUser && f.fahrtage && f.fahrtage.includes(tag));
+    if (istFahrer) {
+      alert('Du bist an diesem Tag bereits als Fahrer eingetragen.');
+      return;
+    }
+    // Mitfahrer speichern (pro User+Tag nur einmal)
+    let mitfahrerDaten = storage.getMitfahrerDaten ? storage.getMitfahrerDaten() : [];
+    const index = mitfahrerDaten.findIndex(m => m.email === loggedInUser && m.tag === tag);
+    const neuerMitfahrer = { email: loggedInUser, tag, zielzeit, startAdresse };
+    if (index !== -1) {
+      mitfahrerDaten[index] = neuerMitfahrer;
+    } else {
+      mitfahrerDaten.push(neuerMitfahrer);
+    }
+    if (storage.saveMitfahrerDaten) {
+      storage.saveMitfahrerDaten(mitfahrerDaten);
+    } else {
+      localStorage.setItem('mitfahrerDaten', JSON.stringify(mitfahrerDaten));
+    }
+    e.target.reset();
+    alert('Als Mitfahrer gespeichert!');
+    zeigeBereich('startScreen');
+  });
+}
+
+// Erweiterung für storage:
+if (!setupStorage().getMitfahrerDaten) {
+  setupStorage().getMitfahrerDaten = function() {
+    return JSON.parse(localStorage.getItem('mitfahrerDaten')) || [];
+  };
+  setupStorage().saveMitfahrerDaten = function(data) {
+    localStorage.setItem('mitfahrerDaten', JSON.stringify(data));
+  };
+}
+
+function zeigeStartseite() {
+  // Nach Login ist die Startseite der userInfo-Bereich (mit den Auswahl-Buttons)
+  zeigeBereich('startScreen');
+}
+
+</script>
+<footer class="copyright-footer">
+  &copy; <span id="copyrightYear"></span> Jared Auras, Studiengang: Digitalisierung, Prozessoptimierung &amp; Management
+</footer>
+<script>
+  document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

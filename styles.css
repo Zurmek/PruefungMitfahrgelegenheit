@@ -1,0 +1,565 @@
+:root {
+  --primary: #c60000;
+  --secondary: #8f0000;
+  --background: #ffffff;
+  --gray: #f4f4f4;
+  --dark: #1f2937;
+  --success: #4caf50;
+  --error: #f44336;
+  --text: #1a1a1a;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1, h2, h3 {
+  color: var(--dark);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+form, .results, .fahrer-liste, .nachricht-box, .section-box {
+  background-color: #fff;
+  color: var(--text);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+input, select, textarea {
+  background-color: #f5f6fa;
+  color: var(--text);
+  border: 1px solid var(--gray);
+  border-radius: 0.4rem;
+  padding: 0.6rem 1rem;
+  width: 100%;
+  font-size: 1rem;
+  margin-top: 0.2rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+}
+
+button:hover {
+  background-color: var(--secondary);
+  transform: translateY(-2px);
+}
+
+.secondary-button {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  margin-top: 0.5rem;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.5rem;
+}
+
+.secondary-button:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.small-button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  background-color: var(--gray);
+  color: var(--dark);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.small-button:hover {
+  background-color: var(--gray);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.route-input {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.route-input button {
+  width: auto;
+  padding: 0.8rem;
+}
+
+.route-list {
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.route-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: var(--gray);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.route-item button {
+  width: auto;
+  padding: 0.4rem;
+  background-color: var(--error);
+}
+
+.fahrer-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; /* statt center */
+  justify-content: space-between;
+  flex-wrap: wrap; /* Zeilenumbruch erlauben */
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--gray);
+  background: #f5f6fa;
+  border-radius: 0.7rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  position: relative
+}
+
+.fahrer-info {
+  flex: 1 1 250px; /* flexibler, aber Mindestbreite */
+  min-width: 220px;
+}
+
+.fahrer-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  margin-left: 1em;
+  position: static;
+  top: auto;
+  right: auto;
+  transform: none;
+}
+
+.stornieren-action {
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0;
+  margin-top: 0;
+  z-index: 2;
+}
+
+.stornieren-action button,
+.stornieren-action .small-button {
+  background: transparent !important;
+  border: none;
+  color: #c60000;
+  font-size: 1.3em;
+  cursor: pointer;
+  box-shadow: none;
+  padding: 0.2em 0.5em;
+}
+
+.stornieren-action button:hover,
+.stornieren-action .small-button:hover {
+  background: #ffeaea;
+}
+
+@media (max-width: 600px) {
+  .fahrer-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .fahrer-action {
+    margin-left: 0;
+    margin-top: 1rem;
+    justify-content: flex-end;
+  }
+}
+
+.fahrer-item button {
+  background-color: #10b981;
+}
+
+#map {
+  height: 300px;
+  margin-top: 2rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message-preview {
+  background-color: var(--gray);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  white-space: pre-wrap;
+}
+
+a {
+  color: var(--primary);
+  word-break: break-word;
+}
+
+.loading {
+  display: none;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.loading.active {
+  display: block;
+}
+
+.results:empty, .fahrer-liste:empty {
+  display: none;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem 2.5rem;
+  margin: 2.5rem 0 0 0;
+}
+
+.button-row button {
+  min-width: 220px;
+  font-size: 1.2rem;
+  padding: 1rem 0;
+  border-radius: 0.8rem;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 1.2rem;
+}
+
+#homeFixed {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 999;
+}
+
+.home-button {
+  background-color: var(--gray);
+  color: var(--dark);
+  border: none;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  padding: 0.5rem 0.65rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.home-button:hover {
+  background-color: var(--primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+.welcome-list {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.welcome-list li {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+
+  h1, h2 {
+    font-size: 1.5rem;
+  }
+
+  input, select, button, textarea {
+    font-size: 0.9rem;
+  }
+}
+
+.footer-links {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 999;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal.show {
+  display: flex !important; /* Nur wenn explizit angezeigt werden soll */
+}
+.modal-content {
+  background-color: white;
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+  max-width: 95vw;
+  width: 400px;
+  text-align: center;
+  position: relative;
+}
+
+@media (max-width: 500px) {
+  .modal-content {
+    width: 95vw;
+    padding: 1.2rem 0.5rem;
+  }
+}
+
+/* Close button for modal */
+#impressumModal .small-button {
+  font-size: 0.85rem;
+  padding: 0.3em 0.8em;
+  margin-top: 1.2em;
+}
+
+/* Dropdown container */
+.dropdown {
+  position: fixed; /* Fix the dropdown to the viewport */
+  top: 1rem; /* Position it at the top */
+  right: 1rem; /* Align it to the right */
+  z-index: 999; /* Ensure it stays above other elements */
+}
+
+/* Dropdown content */
+.dropdown-content {
+  display: none; /* Ensure the dropdown is hidden by default */
+  position: absolute;
+  background-color: white;
+  min-width: 150px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  z-index: 1;
+  overflow: hidden;
+  right: 0; /* Align the dropdown to the right edge of the button */
+  top: 100%; /* Position the dropdown below the button */
+  flex-direction: column; /* Stack items vertically */
+}
+
+.tertierary-button {
+  background-color: transparent;
+  color: black;
+  border: 1px solid black;
+  margin-top: 0.5rem;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.5rem;
+
+}
+
+.tertierary-button:hover {
+  color: var(--background);
+  background-color: var(--primary);
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content {
+  display: flex; /* Show the dropdown when hovering over the dropdown container */
+}
+
+/* Dropdown button */
+.dropdown-button {
+  background: none; /* Remove background */
+  border: none; /* Remove border */
+  font-size: 1.5rem; /* Adjust size of the symbol */
+  cursor: pointer;
+  padding: 0.5rem; /* Add some padding for better clickability */
+  color: var(--dark); /* Use the dark color for the symbol */
+}
+
+.dropdown-button:focus {
+  outline: none; /* Remove the blue focus outline */
+  box-shadow: none; /* Remove any additional focus styling */
+}
+
+.dropdown-button:hover {
+  color: var(--background); /* Optional: Change color on hover */
+  background-color: var(--primary); /* Optional: Add a background color on hover */
+}
+
+.mitfahrer-tag-buttons .secondary-button {
+  font-size: 0.85em;
+  padding: 2px 8px;
+  margin: 2px 2px 2px 0;
+  background: #eee;
+  color: #333;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.mitfahrer-tag-buttons .secondary-button:hover {
+  background: #ddd;
+  color: #111;
+  border-color: #888;
+}
+
+
+.fahrt-icon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+.fahrten-section-title {
+  font-size: 1.4rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: var(--dark);
+}
+
+.fahrten-box {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+
+
+#logoFixed {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: transparent;
+  border-radius: 0.7rem;
+  padding: 0.2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+#logoImg {
+  height: 80px;
+  width: auto;
+  display: block;
+}
+
+
+.copyright-footer {
+  width: 100%;
+  background: #fff;
+  color: #888;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 0.7rem 0;
+  margin-top: 2rem;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.03);
+  position: static; /* Nicht mehr fixed! */
+}
+
+
+.fahrer-info {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 1.08rem;
+}
+
+.fahrt-plaetze {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.7rem;
+  white-space: nowrap;
+}
+
+.fahrt-zeile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.1rem;
+}
+
+.fahrt-icon {
+  font-size: 1.2rem;
+  width: 1.6em;
+  text-align: center;
+}
+
+.fahrt-datum {
+  font-weight: 500;
+  color: #333;
+}
+
+.fahrt-route {
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.fahrt-plaetze {
+  color: #444;
+}
+
+.fahrt-anbieter {
+  margin-top: 0.4em;
+  font-size: 1rem;
+  color: #444;
+}
+
+
+.fahrt-plaetze span { display: inline-block; }
+
+.mitfahrer-liste li {
+  margin-bottom: 0.2em;
+  font-size: 1rem;
+}

@@ -32,11 +32,11 @@
     <form id="matchFormSuche">
       <div class="input-group">
         <label for="sucheStartSuche">🚗 Von</label>
-        <input type="text" id="sucheStartSuche" placeholder="Startort" required />
+        <input type="text" id="sucheStartSuche" placeholder="Startort (z.B. München)" required />
       </div>
       <div class="input-group">
         <label for="sucheZielSuche">🏁 Nach</label>
-        <input type="text" id="sucheZielSuche" placeholder="Zielort" required />
+        <input type="text" id="sucheZielSuche" placeholder="Zielort (z.B. Landshut)" required />
       </div>
       <div class="input-group">
         <label for="sucheDatumSuche">🗓️ Datum</label>
@@ -174,12 +174,12 @@
     <form id="fahrerForm" style="display: none">
       <button type="button" class="secondary-button" onclick="zeigeBereich('startScreen')">Zurück</button>
       <h2>Fahrt anbieten</h2>
-      <div class="input-group"><label for="fahrtStart">🚗 Start:</label><input type="text" id="fahrtStart" required /></div>
-      <div class="input-group"><label for="fahrtZiel">🏁 Ziel:</label><input type="text" id="fahrtZiel" required /></div>
-      <div class="input-group"><label for="fahrtDatum">🗓️ Datum:</label><input type="date" id="fahrtDatum" required /></div>
-      <div class="input-group"><label for="fahrtZeit">⏰ Uhrzeit:</label><input type="time" id="fahrtZeit" required /></div>
-      <div class="input-group"><label for="freiePlaetze">💺 Freie Plätze:</label><input type="number" id="freiePlaetze" min="1" max="8" required /></div>
-      <div class="input-group"><label for="fahrtPreis">💶 Preis pro Platz (€):</label><input type="number" id="fahrtPreis" min="0" step="0.5" required /></div>
+      <div class="input-group"><label for="fahrtStart">🚗 Von:</label><input type="text" id="fahrtStart" required placeholder="Startort (z.B. München)"/></div>
+      <div class="input-group"><label for="fahrtZiel">🏁 Nach:</label><input type="text" id="fahrtZiel" required placeholder="Zielort (z.B. Landshut)"/></div>
+      <div class="input-group"><label for="fahrtDatum">🗓️ Datum:</label><input type="date" id="fahrtDatum" required placeholder="z.B. 01.01.2030"/></div>
+      <div class="input-group"><label for="fahrtZeit">⏰ Abfahrtszeit:</label><input type="time" id="fahrtZeit" required/></div>
+      <div class="input-group"><label for="freiePlaetze">💺 Freie Plätze:</label><input type="number" id="freiePlaetze" min="1" max="8" required placeholder="z.B. 3"/></div>
+      <div class="input-group"><label for="fahrtPreis">💶 Preis pro Platz (€):</label><input type="number" id="fahrtPreis" min="0" step="0.5" required placeholder="z.B. 4,5 €"/></div>
       <button type="submit">Fahrt speichern</button>
     </form>
 
@@ -252,7 +252,7 @@ function zeigeMitfahrerListe(tag) {
   const mitfahrerListe = mitfahrerDaten.filter(m => m.tag === tag);
   let html = '';
   if (mitfahrerListe.length === 0) {
-    html = '<p>Keine Mitfahrer für diesen Tag gefunden.</p>';
+    html = '<p>Mitfahrer für diesen Tag gefunden.</p>';
   } else {
     mitfahrerListe.forEach(m => {
       html += `<div class="mitfahrer-item">

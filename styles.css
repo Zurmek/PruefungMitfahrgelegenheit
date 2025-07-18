@@ -567,3 +567,84 @@ a {
 #welcomeBox {
   text-align: center;
 }
+
+
+.anfragen-liste {
+  list-style: none;
+  padding: 0;
+  margin: 0.5em 0 0 0;
+}
+
+.anfragen-liste li {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin-bottom: 0.3em;
+}
+
+.anfrage-email {
+  font-weight: 500;
+  color: #c60000;
+  word-break: break-all;
+  white-space: nowrap;      /* NEU: verhindert Zeilenumbruch */
+  display: inline-block;    /* NEU: verhindert Blockverhalten */
+  max-width: 250px;         /* Optional: maximale Breite */
+  overflow: hidden;         /* Optional: falls zu lang */
+  text-overflow: ellipsis;  /* Optional: ... am Ende */
+}
+
+.ablehnen-btn {
+  background: #fbeaea !important;
+  color: #c60000 !important;
+}
+
+.ablehnen-btn:hover {
+  background: #f44336 !important;
+  color: #fff !important;
+}
+
+.akzeptieren-btn {
+  background: #e6fbe9 !important;
+  color: #1a7f3c !important;
+}
+
+.akzeptieren-btn:hover {
+  background: #10b981 !important;
+  color: #fff !important;
+}
+
+
+.anfragen-box {
+  margin-top: 1em;
+  padding: 0.7em 1em;
+  background: #F5F6FA;
+  border-radius: 0.6em;
+}
+
+.anfragen-liste {
+  list-style: none;
+  padding: 0;
+  margin: 0.3em 0 0 0;
+}
+
+.anfragen-liste li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  margin-bottom: 0.3em;
+}
+
+.anfrage-name {
+  font-weight: 500;
+  color: #c60000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.anfrage-buttons {
+  display: flex;
+  gap: 0.5em;
+}

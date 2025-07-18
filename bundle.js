@@ -366,7 +366,7 @@ function setupFahrtSucheForm(storage) {
           </div>
         </div>
         <div class="fahrer-action">
-          <button class="anfrage-button" onclick="anfrageSenden(${i})">Anfrage senden</button>
+          <button class="anfrage-button" onclick="anfrageSenden('${f.datum}','${f.zeit}','${f.start}','${f.ziel}')">Anfrage senden</button>
         </div>
       </div>
     `).join('')}
@@ -384,15 +384,22 @@ function setupFahrtSucheForm(storage) {
 
 // Anfrage senden (Mitfahrer bucht Fahrt)
 // Ersetze window.anfrageSenden durch:
-window.anfrageSenden = function(fahrtIndex) {
+window.anfrageSenden = function(datum, zeit, start, ziel) {
   const storage = setupStorage();
   const fahrten = storage.getFahrerDaten();
   const loggedInUser = storage.getLoggedInUser();
   if (!loggedInUser) return alert('Bitte einloggen!');
-  const fahrt = fahrten[fahrtIndex];
-  if (!fahrt) return;
+
+  // Suche die Fahrt eindeutig anhand der Parameter
+  const fahrt = fahrten.find(f =>
+    f.datum === datum &&
+    f.zeit === zeit &&
+    f.start === start &&
+    f.ziel === ziel
+  );
+  if (!fahrt) return alert('Fahrt nicht gefunden!');
   if (!fahrt.anfragen) fahrt.anfragen = [];
-  if (fahrt.anfragen.includes(loggedInUser) || fahrt.mitfahrer.includes(loggedInUser)) {
+  if (fahrt.anfragen.includes(loggedInUser) || (fahrt.mitfahrer && fahrt.mitfahrer.includes(loggedInUser))) {
     alert('Du hast diese Fahrt bereits angefragt oder bist schon Mitfahrer.');
     return;
   }
@@ -427,14 +434,27 @@ const meineFahrten = fahrten.filter(f =>
   if (f.start && f.ziel && f.datum) {
     let anfragenHtml = '';
     if (f.anfragen && f.anfragen.length > 0) {
-      anfragenHtml = '<div><b>Anfragen:</b><ul>' +
-        f.anfragen.map(email =>
-          `<li>${email} 
-            <button class="small-button" onclick="anfrageAkzeptieren('${f.datum}','${f.zeit}','${email}')">✅ Akzeptieren</button>
-            <button class="small-button" onclick="anfrageAblehnen('${f.datum}','${f.zeit}','${email}')">❌ Ablehnen</button>
-          </li>`
-        ).join('') +
-        '</ul></div>';
+      anfragenHtml = `
+        <div class="anfragen-box">
+          <b>Anfragen:</b>
+          <ul class="anfragen-liste">
+            ${f.anfragen.map(email => {
+              const users = setupStorage().getUsers();
+              const user = users.find(u => u.email === email);
+              const name = user ? `${user.firstName || ''} ${user.lastName || ''}` : email;
+              return `
+                <li>
+                  <span class="anfrage-name">${name}</span>
+                  <span class="anfrage-buttons">
+                    <button class="small-button akzeptieren-btn" onclick="anfrageAkzeptieren('${f.datum}','${f.zeit}','${email}')">✅ Akzeptieren</button>
+                    <button class="small-button ablehnen-btn" onclick="anfrageAblehnen('${f.datum}','${f.zeit}','${email}')">❌ Ablehnen</button>
+                  </span>
+                </li>
+              `;
+            }).join('')}
+          </ul>
+        </div>
+      `;
     }
     // ...innerhalb von meineFahrten.map(f => { ... })
 return `<div class="fahrer-item">
@@ -474,6 +494,7 @@ return `<div class="fahrer-item">
         </span>
       </span>
     </div>
+    ${anfragenHtml} <!-- HIER einfügen -->
     ${
       f.mitfahrer && f.mitfahrer.length > 0
         ? `<ul class="mitfahrer-liste" style="margin:0.5em 0 0 0;padding:0;list-style:none;">
@@ -507,6 +528,9 @@ return `<div class="fahrer-item">
     html += meineBuchungen.map(f => `
   <div class="fahrer-item">
     <div class="fahrer-info">
+      <div class="fahrer-action stornieren-action" style="position:absolute; top:50%; right:1.2em; transform:translateY(-50%);">
+        <button class="small-button" title="Buchung stornieren" onclick="buchungStornieren('${f.datum}','${f.zeit}')">❌</button>
+      </div>
       <div class="fahrt-zeile">
         <span class="fahrt-icon">🗓️</span>
         <span class="fahrt-datum">${formatDate(f.datum)} um ${f.zeit || ''} Uhr</span>
@@ -540,15 +564,13 @@ return `<div class="fahrer-item">
           </span>
           </div>
           <div class="fahrt-anbieter">
-            Fahrt angeboten von ${f.firstName || ''} ${f.lastName || ''}
+            Du fährst mit bei <b>${f.firstName || ''} ${f.lastName || ''}</b>
             ${f.phone ? `<a href="https://wa.me/${f.phone.replace(/^0/, '49')}" target="_blank" title="WhatsApp"><img src="WhatsAppIcon.svg" alt="WhatsApp" style="width:2.0em; height:2.0em; vertical-align:middle; margin-right:0.3em;"></a>${f.phone}` : ''}
           </div>
         </span>
       </div>
     </div>
-    <div class="fahrer-action">
-      <button class="anfrage-button" onclick="buchungStornieren('${f.datum}','${f.zeit}')">Buchung stornieren</button>
-    </div>
+    
   </div>
 `).join('');
   }
@@ -806,7 +828,7 @@ function zeigeGefilterteFahrer(fahrerDaten, {zeigeVergangene = false} = {}){
 
   const fahrerListeContent = document.getElementById('fahrerListeContent');
   if (!fahrerDaten.length) {
-    fahrerListeContent.innerHTML = '<p>Keine Fahrer gefunden.</p>';
+    fahrerListeContent.innerHTML = '<p>Keine passende Fahrten gefunden.</p>';
     return;
   }
   fahrerListeContent.innerHTML = fahrerDaten.map((f, idx) => {
@@ -814,7 +836,7 @@ function zeigeGefilterteFahrer(fahrerDaten, {zeigeVergangene = false} = {}){
   const loggedInUser = storage.getLoggedInUser();
   const istEigeneFahrt = f.fahrer === loggedInUser;
   const buttonHtml = !istEigeneFahrt
-    ? `<button class="anfrage-button" onclick="anfrageSenden(${idx})">Anfrage senden</button>`
+    ? `<button class="anfrage-button" onclick="anfrageSenden('${f.datum}','${f.zeit}','${f.start}','${f.ziel}')">Anfrage senden</button>`
     : '';
   return `
   <div class="fahrer-item">

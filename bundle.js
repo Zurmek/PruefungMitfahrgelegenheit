@@ -519,7 +519,47 @@ return `<div class="fahrer-item">
     return `<div><b>${f.fahrerWohnort || ''}</b> (${(f.fahrtage || []).join(', ')}) Ankunft: ${f.ankunft || ''}</div>`;
   }
 }).join('');
+// Nach dem Block für angebotene Fahrten, aber vor gebuchte Fahrten:
+const meineAngefragten = fahrten.filter(f =>
+  Array.isArray(f.anfragen) &&
+  f.anfragen.includes(loggedInUser) &&
+  !(Array.isArray(f.mitfahrer) && f.mitfahrer.includes(loggedInUser))
+);
 
+html += '<h3 class="fahrten-section-title">🕒 Meine angefragten Fahrten</h3>';
+if (meineAngefragten.length === 0) {
+  html += '<p>Keine Fahrten angefragt.</p>';
+} else {
+  html += meineAngefragten.map(f => `
+    <div class="fahrer-item">
+      <div class="fahrer-info" style="position:relative;">
+        <div class="fahrer-action stornieren-action" style="position:absolute; top:50%; right:1.2em; transform:translateY(-50%);">
+          <button class="small-button" title="Anfrage stornieren" onclick="entferneAngefragteFahrt('${f.datum}','${f.zeit}')">❌</button>
+        </div>
+        <div class="fahrt-zeile">
+          <span class="fahrt-icon">🗓️</span>
+          <span class="fahrt-datum">${formatDate(f.datum)} um ${f.zeit || ''} Uhr</span>
+        </div>
+        <div class="fahrt-zeile">
+          <span class="fahrt-icon">🚗</span>
+          <span class="fahrt-route">${f.start || ''} → ${f.ziel || ''}</span>
+        </div>
+        <div class="fahrt-zeile">
+          <span class="fahrt-icon">💺</span>
+          <span class="fahrt-plaetze">
+            ${f.freiePlaetze > 0 ? f.freiePlaetze + ' Plätze frei' : 'Keine Plätze frei'}
+          </span>
+        </div>
+        <div class="fahrt-anbieter">
+          Fahrer: <b>${f.firstName || ''} ${f.lastName || ''}</b>
+        </div>
+        <div style="margin-top:0.5em;">
+          <span style="color:#888;">Status: <b>Anfrage offen</b></span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
   }
   html += '<h3 class="fahrten-section-title">📅 Meine gebuchten Fahrten</h3>';
   if (meineBuchungen.length === 0) {
@@ -916,4 +956,15 @@ window.toggleFahrerFilter = function() {
 window.hideFahrerFilter = function() {
   const box = document.getElementById('fahrerFilterBox');
   if (box) box.style.display = 'none';
+};
+
+window.entferneAngefragteFahrt = function(datum, zeit) {
+  const storage = setupStorage();
+  const fahrten = storage.getFahrerDaten();
+  const loggedInUser = storage.getLoggedInUser();
+  const fahrt = fahrten.find(f => f.datum === datum && f.zeit === zeit);
+  if (!fahrt) return;
+  fahrt.anfragen = (fahrt.anfragen || []).filter(email => email !== loggedInUser);
+  storage.saveFahrerDaten(fahrten);
+  window.zeigeMeineFahrten();
 };

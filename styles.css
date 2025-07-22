@@ -637,11 +637,16 @@ a {
 
 .anfrage-name {
   font-weight: 500;
-  color: #c60000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180px;
+  color: inherit;           /* <-- Standardfarbe statt rot */
+  overflow: visible;
+  text-overflow: unset;
+  max-width: none;          /* <-- Volle Breite erlauben */
+  display: flex;            /* <-- Flex für eine Zeile */
+  align-items: center;
+  white-space: nowrap;      /* <-- Kein Zeilenumbruch */
+  word-break: normal;       /* Standard Wortumbruch */
+  flex-wrap: nowrap;        /* Kein Umbruch */
+  gap: 0.5em;               /* Abstand zwischen Name, Icon, Nummer */
 }
 
 .anfrage-buttons {

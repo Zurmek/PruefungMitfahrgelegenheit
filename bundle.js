@@ -442,10 +442,15 @@ const meineFahrten = fahrten.filter(f =>
               const users = setupStorage().getUsers();
               const user = users.find(u => u.email === email);
               const name = user ? `${user.firstName || ''} ${user.lastName || ''}` : email;
+              const phone = user?.phone || '';
               return `
                 <li>
-                  <span class="anfrage-name">${name}</span>
-                  <span class="anfrage-buttons">
+                  <span class="anfrage-name">${name}
+                    ${phone ? `<a href="https://wa.me/${phone.replace(/^0/, '49')}" target="_blank" title="WhatsApp">
+                      <img src="WhatsAppIcon.svg" alt="WhatsApp" style="width:2.0em; height:2.0em; vertical-align:middle; margin-left:0.3em;">
+                    </a> ${phone}` : ''}
+                  </span>
+                  <span class="anfrage-buttons" style="flex-direction: column; gap: 0.3em;">
                     <button class="small-button akzeptieren-btn" onclick="anfrageAkzeptieren('${f.datum}','${f.zeit}','${email}')">✅ Akzeptieren</button>
                     <button class="small-button ablehnen-btn" onclick="anfrageAblehnen('${f.datum}','${f.zeit}','${email}')">❌ Ablehnen</button>
                   </span>

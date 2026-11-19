@@ -653,3 +653,14 @@ a {
   display: flex;
   gap: 0.5em;
 }
+
+/* Fixierte Elemente oben (Logo links, Menue rechts) ueberlappen
+   auf schmalen Bildschirmen den Seiteninhalt. */
+@media (max-width: 900px) {
+  body {
+    padding-top: 6rem;
+  }
+  #logoImg {
+    height: 56px;
+  }
+}

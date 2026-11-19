@@ -1,4 +1,6 @@
 # Fahrgemeinschafts-Matcher
+> Studienprojekt an der Hochschule Landshut. Keine offizielle
+> Anwendung der Hochschule.
 
 Eine Web-App, über die Studierende der Hochschule Landshut
 Fahrgemeinschaften zur Hochschule finden und anbieten können.
